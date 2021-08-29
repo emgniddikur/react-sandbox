@@ -1,3 +1,19 @@
 .base {
-  //
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 7.5px;
+
+  img {
+    object-fit: cover;
+  }
+
+  .metaContainer {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+
+    .textContainer {
+      margin-left: 12px;
+    }
+  }
 }

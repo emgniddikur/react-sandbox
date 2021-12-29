@@ -1,7 +1,9 @@
-import { Position } from "@/utils/Position";
-import { Size } from "@/utils/Size";
-import { Character } from "./Character";
-import { Config } from "./Config";
+import { Character } from './Character';
+import { Config } from './Config';
+
+import { Position } from '@/utils/Position';
+import { Size } from '@/utils/Size';
+import { assertNever } from '@/utils/assertNever';
 
 export class Enemy extends Character {
   constructor(
@@ -18,9 +20,9 @@ export class Enemy extends Character {
     }
 
     switch (Config.scene) {
-      case "appearance":
+      case 'appearance':
         break;
-      case "play":
+      case 'play':
         break;
       default:
         assertNever(Config.scene);

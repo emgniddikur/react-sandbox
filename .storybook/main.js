@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   stories: ['../src/**/*.stories.tsx'],
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
+  addons: ['@storybook/addon-links', '@storybook/addon-essentials', 'storycap'],
   webpackFinal: async (config) => {
     config.resolve.alias['@'] = path.resolve(__dirname, '../src');
 
@@ -11,6 +11,8 @@ module.exports = {
       use: ['style-loader', 'css-loader', 'sass-loader'],
       include: path.resolve(__dirname, '../'),
     });
+
+    config.experiments = { asyncWebAssembly: true };
 
     return config;
   },

@@ -1,15 +1,14 @@
----
-to: <%= absPath %>/index.test.tsx
----
+import 'jest-styled-components';
+
 import { cleanup, render } from '@testing-library/react';
 
 import { defaultProps } from './index.stories';
 
-import { <%= componentName %> } from './';
+import { Handle } from './';
 
-const setup = () => render(<<%= componentName %> {...defaultProps} />);
+const setup = () => render(<Handle {...defaultProps} />);
 
-describe('<%= componentName %>', () => {
+describe('Handle', () => {
   afterEach(() => {
     cleanup();
   });

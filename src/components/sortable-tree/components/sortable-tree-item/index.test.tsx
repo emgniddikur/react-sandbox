@@ -1,15 +1,14 @@
----
-to: <%= absPath %>/index.test.tsx
----
+import 'jest-styled-components';
+
 import { cleanup, render } from '@testing-library/react';
 
 import { defaultProps } from './index.stories';
 
-import { <%= componentName %> } from './';
+import { SortableTreeItem } from './';
 
-const setup = () => render(<<%= componentName %> {...defaultProps} />);
+const setup = () => render(<SortableTreeItem {...defaultProps} />);
 
-describe('<%= componentName %>', () => {
+describe('SortableTreeItem', () => {
   afterEach(() => {
     cleanup();
   });

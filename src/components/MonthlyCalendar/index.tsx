@@ -1,55 +1,34 @@
 import clsx from 'clsx';
-import { useState } from 'react';
 
+import { useMonth } from './hooks/useMonth';
 import styles from './styles.module.scss';
 import { createDateGrid } from './utils/createDateGrid';
 
 import { isSameDate } from '@/utils/date/isSameDate';
 import { jaDays } from '@/utils/date/jaDays';
 
-type Props = {
+export type MonthlyCalendarProps = {
   onClickDate: (date: Date) => void;
   dateClassNames?: ((date: Date) => string | false)[];
 };
 
-export const MonthlyCalendar: React.VFC<Props> = (props) => {
+export const MonthlyCalendar: React.VFC<MonthlyCalendarProps> = (props) => {
   const now = new Date();
 
-  const [currentMonthFirstDate, setCurrentMonthFirstDate] = useState(
-    new Date(now.getFullYear(), now.getMonth()),
-  );
+  const month = useMonth();
 
-  const onClickPrevMonth = (): void => {
-    setCurrentMonthFirstDate(
-      (currentMonthFirstDate) =>
-        new Date(
-          currentMonthFirstDate.getFullYear(),
-          currentMonthFirstDate.getMonth(),
-          0,
-        ),
-    );
-  };
+  const yearAndMonth = `${month.currentMonthFirstDate.getFullYear()}年 ${
+    month.currentMonthFirstDate.getMonth() + 1
+  }月`;
 
-  const onClickNextMonth = (): void => {
-    setCurrentMonthFirstDate(
-      (currentMonthFirstDate) =>
-        new Date(
-          currentMonthFirstDate.getFullYear(),
-          currentMonthFirstDate.getMonth() + 1,
-        ),
-    );
-  };
-
-  const dateGrid = createDateGrid(currentMonthFirstDate);
+  const dateGrid = createDateGrid(month.currentMonthFirstDate);
 
   return (
     <div className={styles.base}>
       <div className={styles.header}>
-        <button onClick={onClickPrevMonth}>{'<'}</button>
-        <div>{`${currentMonthFirstDate.getFullYear()}年 ${
-          currentMonthFirstDate.getMonth() + 1
-        }月`}</div>
-        <button onClick={onClickNextMonth}>{'>'}</button>
+        <button onClick={month.prev}>{'<'}</button>
+        <div>{yearAndMonth}</div>
+        <button onClick={month.next}>{'>'}</button>
       </div>
 
       <div>

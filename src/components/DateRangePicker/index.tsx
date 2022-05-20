@@ -1,31 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import styles from './styles.module.scss';
 
 import { MonthlyCalendar } from '@/components/MonthlyCalendar';
 import { Popover } from '@/components/Popover';
+import { endOfDate } from '@/utils/date/end-of-date';
 import { isSameDate } from '@/utils/date/isSameDate';
 import { useShow } from '@/utils/useShow';
 
-type NonNullableArray<T extends unknown[]> = {
-  [P in keyof T]: NonNullable<T[P]>;
-};
 type Props = {
   dateRange: [startDate: Date | null, endDate: Date | null];
-  setDateRange: (dateRange: NonNullableArray<Props['dateRange']>) => void;
+  setDateRange: (dateRange: Props['dateRange']) => void;
 };
 
 export const DateRangePicker: React.VFC<Props> = (props) => {
   const [firstSelectedDate, setFirstSelectedDate] = useState<Date | null>(null);
 
-  const [dateRange, setDateRange] = useState(props.dateRange);
-  const startDate = dateRange[0];
-  const endDate = dateRange[1];
+  const [startDate, endDate] = props.dateRange;
 
-  const startDateValue =
-    props.dateRange[0] != null ? props.dateRange[0].toLocaleDateString() : '';
-  const endDateValue =
-    props.dateRange[1] != null ? props.dateRange[1].toLocaleDateString() : '';
+  const startDateValue = startDate?.toLocaleDateString() ?? '';
+  const endDateValue = endDate?.toLocaleDateString() ?? '';
 
   const { isShown, show, hide } = useShow();
 
@@ -39,27 +33,36 @@ export const DateRangePicker: React.VFC<Props> = (props) => {
     if (firstSelectedDate == null) {
       setFirstSelectedDate(date);
 
-      setDateRange([null, null]);
+      props.setDateRange([null, null]);
     } else {
       setFirstSelectedDate(null);
 
       const newDateRange: [Date, Date] =
         date < firstSelectedDate
-          ? [date, firstSelectedDate]
-          : [firstSelectedDate, date];
-      setDateRange(newDateRange);
+          ? [date, endOfDate(firstSelectedDate)]
+          : [firstSelectedDate, endOfDate(date)];
+      props.setDateRange(newDateRange);
+
+      hide();
     }
   };
 
-  const onClickSubmit = () => {
-    if (startDate == null || endDate == null) {
-      return;
+  useEffect(() => {
+    if (!isShown) {
+      setFirstSelectedDate(null);
     }
+  }, [isShown]);
 
-    props.setDateRange([startDate, endDate]);
+  const isForDate = (date: Date): boolean =>
+    startDate != null &&
+    endDate != null &&
+    startDate <= date &&
+    date <= endDate;
 
-    hide();
-  };
+  const isSelectedDate = (date: Date): boolean =>
+    [firstSelectedDate, startDate, endDate].some(
+      (date2) => date2 != null && isSameDate(date, date2),
+    );
 
   return (
     <div>
@@ -87,20 +90,10 @@ export const DateRangePicker: React.VFC<Props> = (props) => {
         <MonthlyCalendar
           onClickDate={onClickDate}
           dateClassNames={[
-            (date) =>
-              [firstSelectedDate, startDate, endDate].some(
-                (date2) => date2 != null && isSameDate(date, date2),
-              ) && styles.selectedDate,
-            (date) =>
-              startDate != null &&
-              endDate != null &&
-              startDate < date &&
-              date < endDate &&
-              styles.inDate,
+            (date) => isForDate(date) && styles.forDate,
+            (date) => isSelectedDate(date) && styles.selectedDate,
           ]}
         />
-
-        <button onClick={onClickSubmit}>決定</button>
       </Popover>
     </div>
   );
